@@ -1,16 +1,20 @@
-import  express, { request, response } from 'express';
+import express from 'express';
 import { port, mongoDBURL } from './config.js';
 import mongoose from 'mongoose';
 import { Book } from './models/bookModel.js';
 
 const app = express();
 
-app.get('/', (request, response ) => {
-    console.log(request)
+// Middleware to parse JSON for all routes
+app.use(express.json());
+
+app.get('/', (request, response) => {
+    console.log(request);
     return response.status(234).send('Message from server');
 });
 
-app.get('/books', async (request, response) => {
+// Route to create a new book
+app.post('/books', async (request, response) => {
     try {
         if (
             !request.body.title ||
@@ -18,9 +22,10 @@ app.get('/books', async (request, response) => {
             !request.body.publishYear
         ) {
             return response.status(400).send({
-                message: 'Please fill in all required fields',
-            })
+                message: 'Please fill in all required fields: title, author, publishYear',
+            });
         }
+
         const newBook = new Book({
             title: request.body.title,
             author: request.body.author,
@@ -34,9 +39,18 @@ app.get('/books', async (request, response) => {
         console.log(error.message);
         return response.status(500).json({ message: error.message });
     }
-}
-);
+});
 
+// Route to get all books
+app.get('/books', async (request, response) => {
+    try {
+        const books = await Book.find({});
+        return response.status(200).json(books);
+    } catch (error) {
+        console.log(error.message);
+        return response.status(500).send({ message: error.message });
+    }
+});
 
 mongoose
     .connect(mongoDBURL, { useNewUrlParser: true, useUnifiedTopology: true })
