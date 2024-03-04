@@ -11,13 +11,16 @@ const app = express();
 app.use(express.json());
 
 // Middleware to allow cross-origin requests
-app.use(
-    cors({
-        origin: 'http://localhost:3000',
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type'],
-    })
-);
+app.use(cors());
+
+// // Middleware to allow cross-origin requests
+// app.use(
+//     cors({
+//         origin: 'http://localhost:3000',
+//         methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//         allowedHeaders: ['Content-Type'],
+//     })
+// );
 
 
 app.get('/', (request, response) => {
